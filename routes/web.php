@@ -4,7 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    if (!cache()->has('count')) {
+        cache()->set('count', 0);
+    }
+    \App\Jobs\IncrementCount::dispatch();
+    return "Count: " . cache()->get('count');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
